@@ -5,14 +5,14 @@
         <router-link :to="{name: 'home'}"><h4>🤜BREAK💥TASTYLOAD🤛</h4></router-link>
       </div>
       <div class="inputs">
-        <input class="searchInput" type="text" v-model="searchWord" v-on:keyup.enter="enterSearchWord()" placeholder="search"/>
-        <input class="searchInput" type="text" v-model="location" v-on:keyup.enter="enterLocation()" placeholder="지역 검색"/>
+        <input class="searchInput" type="text" v-model="searchWord" v-on:keyup.enter="exploreTastyload()" placeholder="search"/>
+        <input class="searchInput" type="text" v-model="location" v-on:keyup.enter="exploreTastyload()" placeholder="지역 검색"/>
         <div></div>
       </div>
     </div>
     <div class="rightSide">
       <div v-if="!!userName" class="user">
-        <router-link :to="{name: 'userInfo'}">{{userName}}</router-link>
+        <router-link :to="{name: 'profile'}">{{userName}}</router-link>
       </div>
 
       <div v-else class="loggedOutMenu">
@@ -30,30 +30,20 @@
     name: "break-header",
     data() {
       return {
-        userName: ''
+        userName: '',
+        searchWord: this.$route.query.searchWord ? this.$route.query.searchWord : '',
+        location:  this.$route.query.location ? this.$route.query.location : '',
       }
     },
     methods: {
-      enterSearchWord: function () {
-        if (!!this.searchWord) {
+      exploreTastyload: function () {
+        if (!!this.searchWord || !!this.location) {
           const data = {searchWord: this.searchWord, location: this.location};
           this.$store.commit(Types.SEARCH_TASTYLOAD, data);
+          this.$router.push({name: 'explore', query: data})
         }
       },
-      enterLocation: function () {
-        if (!!this.searchLocation) {
-        }
-
-      }
     },
-    computed: {
-      searchWord: function () {
-        return this.$route.query.searchWord ? this.$route.query.searchWord : ''
-      },
-      location: function () {
-        return this.$route.query.location ? this.$route.query.location : ''
-      }
-    }
   }
 </script>
 
