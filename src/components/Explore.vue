@@ -12,10 +12,12 @@
 
   export default {
     name: "explore",
-    components: {ResultContainer, MapCanvas},
+    components: {
+      'result-container': ResultContainer,
+      'map-canvas': MapCanvas
+    },
     data() {
-      return {
-      }
+      return {}
     },
   }
 </script>
@@ -24,7 +26,6 @@
   .explore {
     left: 0;
     width: 100%;
-    position: fixed;
     border: none;
     min-width: 960px;
   }

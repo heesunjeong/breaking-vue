@@ -11,7 +11,7 @@
   export default {
     name: 'HelloWorld',
     components: {
-      'break-header' : Header
+      'break-header': Header
     },
     data() {
       return {}

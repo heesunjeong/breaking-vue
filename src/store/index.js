@@ -5,13 +5,19 @@ import _ from 'lodash'
 
 Vue.use(Vuex)
 
-const store = new Vuex.Store({
+const store = new Vuex.Store(
+  {
     state: {
+      searchCondition: {searchWord: '', location: ''},
+      searchResult: {}
 
-      },
-  mutations: {
+    },
+    mutations: {
       [Types.SEARCH_TASTYLOAD]: (state, payload) => {
-        console.log(state, payload)
+        state.searchCondition = payload;
+      },
+      [Types.SEARCH_RESULT]: (state, payload) => {
+        state.searchResult = payload.documents;
       }
     }
   });

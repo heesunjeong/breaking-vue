@@ -19,8 +19,9 @@ export default new Router(
           {path: '/join', name: 'join', component: Join},
           {path: '/login', name: 'login', component: Login},
           {path: '/profile', name: 'profile', component: Profile},
-        ]},
+        ]
+      },
       {path: '*', component: NotFound}
     ],
-    mode: 'history'
+    /*mode: 'history'*/
   })

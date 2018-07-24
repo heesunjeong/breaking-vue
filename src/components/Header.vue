@@ -2,11 +2,11 @@
   <div class="header">
     <div class="leftSide">
       <div class="nameArea">
-        <router-link :to="{name: 'home'}"><h4>🤜BREAK💥TASTYLOAD🤛</h4></router-link>
+        <router-link :to="{name: 'home'}"><h5>🤜BREAK🤛<br/>TASTYLOAD</h5></router-link>
       </div>
       <div class="inputs">
-        <input class="searchInput" type="text" v-model="searchWord" v-on:keyup.enter="exploreTastyload()" placeholder="search"/>
-        <input class="searchInput" type="text" v-model="location" v-on:keyup.enter="exploreTastyload()" placeholder="지역 검색"/>
+        <input class="searchInput" type="text" v-model="searchWord" v-on:keyup.enter="fetchData()" placeholder="search"/>
+        <input class="searchInput" type="text" v-model="location" v-on:keyup.enter="fetchData()" placeholder="지역 검색"/>
         <div></div>
       </div>
     </div>
@@ -16,7 +16,8 @@
       </div>
 
       <div v-else class="loggedOutMenu">
-        <router-link :to="{name: 'login'}">로그인</router-link> /
+        <router-link :to="{name: 'login'}">로그인</router-link>
+        /
         <router-link :to="{name: 'join'}">회원가입</router-link>
       </div>
     </div>
@@ -25,6 +26,8 @@
 
 <script>
   import Types from '../store/types'
+  import axios from 'axios'
+  import * as Utils from '../utils/utils'
 
   export default {
     name: "break-header",
@@ -32,22 +35,46 @@
       return {
         userName: '',
         searchWord: this.$route.query.searchWord ? this.$route.query.searchWord : '',
-        location:  this.$route.query.location ? this.$route.query.location : '',
+        location: this.$route.query.location ? this.$route.query.location : '',
       }
     },
+    mounted: function () {
+      this.fetchData();
+    },
     methods: {
-      exploreTastyload: function () {
-        if (!!this.searchWord || !!this.location) {
-          const data = {searchWord: this.searchWord, location: this.location};
-          this.$store.commit(Types.SEARCH_TASTYLOAD, data);
-          this.$router.push({name: 'explore', query: data})
+      fetchData: function () {
+        /*axios.get(`http://localhost:8021/maps/location/${this.location}`)
+          .then(res=> {
+            console.log("location", res.data);
+          })*/
+
+        if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.location)) {
+
+          //TODO api주소 바꾸기
+          axios.post('http://localhost:8021/maps/place',
+                     {query: `${this.searchWord} ${this.location}`})
+            .then(res => {
+              if (res) {
+                const data = {searchWord: this.searchWord, location: this.location};
+
+                this.$store.commit(Types.SEARCH_TASTYLOAD, data);
+                this.$store.commit(Types.SEARCH_RESULT, res.data);
+                this.$router.push({name: 'explore', query: data});
+              }
+            })
+            .catch(error => {
+              console.log(error)
+            })
         }
-      },
+      }
     },
   }
 </script>
 
 <style scoped>
+  h5 {
+    margin: 5px;
+  }
   .header {
     background: #0c2946;
     height: 60px;
@@ -90,20 +117,17 @@
     outline: none;
     padding: 10px;
   }
-
   .rightSide {
     float: right;
     margin-right: 10px;
     color: #ffffff;
   }
-
   .rightSide .user {
     display: inline-block;
     height: 60px;
     line-height: 60px;
     vertical-align: middle;
   }
-
   .rightSide .loggedOutMenu {
     float: right;
     list-style: none;

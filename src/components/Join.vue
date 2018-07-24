@@ -1,5 +1,5 @@
 <template>
-<div>join</div>
+  <div>join</div>
 </template>
 
 <script>

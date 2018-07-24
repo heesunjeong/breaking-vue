@@ -16,6 +16,7 @@
 
 <script>
   import Types from '../store/types'
+  import * as Utils from '../utils/utils'
 
   export default {
     name: "Home",
@@ -29,9 +30,11 @@
       clickSearch: function () {
         const data = {searchWord: this.searchWord, location: this.location};
 
-        if (!!this.searchWord || !!this.location) {
+        if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.location)) {
           this.$store.commit(Types.SEARCH_TASTYLOAD, data);
           this.$router.push({name: 'explore', query: data});
+        } else {
+          alert("검색어를 입력해주세요.")
         }
       }
     }

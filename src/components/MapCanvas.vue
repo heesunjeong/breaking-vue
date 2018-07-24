@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: "map-canvas"
+    name: "map-canvas",
   }
 
 </script>
