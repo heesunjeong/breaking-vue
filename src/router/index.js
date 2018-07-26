@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Home from '@/components/Home'
-import NotFound from '@/Components/NotFound'
-import Explore from '@/Components/Explore'
-import Join from '@/Components/Join'
-import Login from '@/Components/Login'
-import Profile from '@/Components/Profile'
+import NotFound from '@/components/NotFound'
+import Explore from '@/components/Explore'
+import Join from '@/components/Join'
+import Login from '@/components/Login'
+import Profile from '@/components/Profile'
 
 Vue.use(Router)
 
@@ -14,7 +14,8 @@ export default new Router(
   {
     routes: [
       {path: '/', name: 'home', component: Home},
-      {path: '/', component: HelloWorld, children: [
+      {
+        path: '/', component: HelloWorld, children: [
           {path: '/explore', name: 'explore', component: Explore},
           {path: '/join', name: 'join', component: Join},
           {path: '/login', name: 'login', component: Login},
