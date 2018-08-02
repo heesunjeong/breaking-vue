@@ -49,10 +49,11 @@
           })*/
 
         if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.location)) {
-
-          //TODO api주소 바꾸기
-          axios.post('http://break.api.dev.9rum.cc/maps/place',
-                     {query: `${this.searchWord} ${this.location}`})
+          axios.get('http://break.api.dev.9rum.cc/maps/place', {
+            params: {
+              query: `${this.searchWord} ${this.location}`
+            }
+          })
             .then(res => {
               if (res) {
                 const data = {searchWord: this.searchWord, location: this.location};
