@@ -51,7 +51,7 @@
         if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.location)) {
 
           //TODO api주소 바꾸기
-          axios.post('http://localhost:8021/maps/place',
+          axios.post('http://break.api.dev.9rum.cc/maps/place',
                      {query: `${this.searchWord} ${this.location}`})
             .then(res => {
               if (res) {

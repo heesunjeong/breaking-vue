@@ -1,7 +1,7 @@
 <template>
   <div class="explore">
-    <result-container></result-container>
-    <map-canvas></map-canvas>
+    <result-container @mouseover="onMouseOver" @mouseleave="onMouseLeave"></result-container>
+    <map-canvas v-bind:selected="selectedStore"></map-canvas>
   </div>
 
 </template>
@@ -17,8 +17,19 @@
       'map-canvas': MapCanvas
     },
     data() {
-      return {}
+      return {
+        selectedStore: ''
+      }
     },
+    methods: {
+      onMouseOver: function (selectedIdx) {
+        this.selectedStore = selectedIdx;
+      },
+      onMouseLeave: function() {
+        this.selectedStore = '';
+      }
+
+    }
   }
 </script>
 

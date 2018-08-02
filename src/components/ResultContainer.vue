@@ -1,13 +1,13 @@
 <template>
   <div class="resultContainer">
-    Search Result Area
-
     <ul class="resultsView">
       <li v-for="(result, idx) in results" class="resultCard">
         <div class="cardHolder">
-          <div>{{idx+1}}. {{result.place_name}}</div>
-          <div>{{result.address_name}}</div>
-          <div>{{result.phone}}</div>
+          <div class="placeArea" @mouseover="onMouseOver(result, idx)" @mouseleave="onMouseLeave()" @click="onClick(idx)">
+            <div>{{idx+1}}. {{result.place_name}}</div>
+            <div>{{result.address_name}}</div>
+            <div>{{result.phone}}</div>
+          </div>
         </div>
       </li>
     </ul>
@@ -24,9 +24,20 @@
       return {}
     },
     computed:
-      mapState({
-        results: 'searchResult',
-      })
+      mapState({results: 'searchResult',}),
+    methods: {
+      onMouseOver: function (result, idx) {
+        this.$emit('mouseover', idx)
+      },
+      onMouseLeave: function () {
+        this.$emit('mouseleave')
+      },
+      onClick: function(idx) {
+        const {address_name, place_name, id} = this.results[idx];
+
+        console.log("click", address_name, place_name, id)
+      }
+    }
   }
 </script>
 
