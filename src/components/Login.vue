@@ -21,7 +21,9 @@
             <img src="../assets/images/goole.png"/>
             로 그 인</button>
         </div>
-        <button type="button" class="btn_basic">회원가입</button>
+        <button type="button" class="btn_basic" >
+          <router-link :to="{name: 'join'}">회원가입</router-link>
+        </button>
       </div>
     </form>
   </div>
