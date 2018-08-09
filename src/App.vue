@@ -40,4 +40,13 @@
     background-color: #f59000;
   }
 
+  .btn_basic {
+    width: 100px;
+    height:30px;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: #0c2946;
+  }
+
 </style>
