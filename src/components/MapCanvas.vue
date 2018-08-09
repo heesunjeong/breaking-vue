@@ -13,7 +13,6 @@
         map: '',
         markers: [],
         selectedMarker: '',
-        position: ''
       }
     },
     mounted: function () {
@@ -25,10 +24,7 @@
 
       // 지도 생성
       this.map = new daum.maps.Map(el, options);
-
-      // 지도 범위 정보
-      this.bounds = new daum.maps.LatLngBounds();
-
+      this.renderMarker(this.results)
     },
     computed: {
       results: function () {
@@ -42,15 +38,16 @@
           this.selectedMarker.close();
 
         } else {
-          if(this.selectedMarker !== '') {
+          const {place_name, road_address_name, x, y} = this.results[val];
+          const position = new daum.maps.LatLng(y, x);
+
+          if (this.selectedMarker !== '') {
             this.selectedMarker.close();
           }
 
-          const {address_name, place_name, id, x, y} = this.results[val];
-          const position = new daum.maps.LatLng(y, x);
+          this.selectedMarker = new daum.maps.InfoWindow({content: `<div class="markerInfo"><div>${val + 1}. ${place_name}</div><div style="font-size: 13px;">${road_address_name}</div></div>`});
+          this.moveCenter(position);
 
-          this.selectedMarker = new daum.maps.InfoWindow({content: `<div class="markerInfo">${val + 1}. ${place_name}</div>`});
-          this.moveCenter(position)
           this.selectedMarker.open(this.map, this.markers[val]);
         }
       },
@@ -61,25 +58,7 @@
           this.markers = [];
         }
 
-        if (val.length) {
-          // 마커 생성, 지도에 표시
-          val.map((res, idx) => {
-            let position = new daum.maps.LatLng(res.y, res.x);
-            let marker = new daum.maps.Marker({map: this.map, position: position});
-            let infoWindow = new daum.maps.InfoWindow({content: `<div class="markerInfo">${idx + 1}. ${res.place_name}</div>`});
-
-            this.markers.push(marker);
-
-            // add marker mouseover, mouseout, click event
-            daum.maps.event.addListener(marker, 'mouseover', this.makeOverListener(this.map, marker, infoWindow));
-            daum.maps.event.addListener(marker, 'mouseout', this.makeOutListener(infoWindow));
-            daum.maps.event.addListener(marker, 'click', this.clickMarker(res));
-
-            if (idx === 0) {
-              this.moveCenter(position)
-            }
-          })
-        }
+        this.renderMarker(val);
       }
     },
     methods: {
@@ -97,12 +76,32 @@
         };
       },
       clickMarker: function (res) {
-        const {id, place_name, road_address_name} = res;
-
         return () => {
-          console.log(place_name, road_address_name, id)
+          this.$router.push({name: 'detail', q: {store: encodeURI(res.place_name)}, params: {placeInfo: res}});
         }
-      }
+      },
+      renderMarker(placeList) {
+        if (placeList.length) {
+          // 마커 생성, 지도에 표시
+          placeList.map((res, idx) => {
+            const {place_name, road_address_name, x, y} = res;
+            let position = new daum.maps.LatLng(y, x);
+            let marker = new daum.maps.Marker({map: this.map, position: position});
+            let infoWindow = new daum.maps.InfoWindow({content: `<div class="markerInfo"><div>${idx + 1}. ${place_name}</div><div style="font-size: 13px;">${road_address_name}</div></div>`});
+
+            this.markers.push(marker);
+
+            // add marker mouseover, mouseout, click event
+            daum.maps.event.addListener(marker, 'mouseover', this.makeOverListener(this.map, marker, infoWindow));
+            daum.maps.event.addListener(marker, 'mouseout', this.makeOutListener(infoWindow));
+            daum.maps.event.addListener(marker, 'click', this.clickMarker(res));
+
+            if (idx === 0) {
+              this.moveCenter(position)
+            }
+          })
+        }
+      },
 
     }
   }
@@ -123,5 +122,9 @@
     position: relative;
     height: 100%;
     overflow: hidden;
+  }
+
+  .markerInfo .marker_address {
+    font-size: 13px;
   }
 </style>

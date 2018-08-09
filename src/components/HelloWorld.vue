@@ -36,7 +36,9 @@
     color: #42b983;
   }
   .mainWrap {
-    padding-top: 60px;
+    padding: 60px 0 60px 0;
+    background-color: #f3f3f3;
+    height: 100%;
   }
 
 </style>

@@ -6,7 +6,7 @@
       </div>
       <div class="inputs">
         <input class="searchInput" type="text" v-model="searchWord" v-on:keyup.enter="fetchData()" placeholder="search"/>
-        <input class="searchInput" type="text" v-model="location" v-on:keyup.enter="fetchData()" placeholder="지역 검색"/>
+        <input class="searchInput" type="text" v-model="near" v-on:keyup.enter="fetchData()" placeholder="지역 검색"/>
         <div></div>
       </div>
     </div>
@@ -32,13 +32,16 @@
   export default {
     name: "break-header",
     data() {
+      const {q, near} = this.$route.query;
+
       return {
-        userName: '',
-        searchWord: this.$route.query.searchWord ? this.$route.query.searchWord : '',
-        location: this.$route.query.location ? this.$route.query.location : '',
+        userName: '정조이',
+        searchWord: q ? q : '',
+        near: near ? near : '',
       }
     },
     mounted: function () {
+      console.log(this.searchWord, this.$route.query.q)
       this.fetchData();
     },
     methods: {
@@ -48,15 +51,15 @@
             console.log("location", res.data);
           })*/
 
-        if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.location)) {
+        if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.near)) {
           axios.get('http://break.api.dev.9rum.cc/maps/place', {
             params: {
-              query: `${this.searchWord} ${this.location}`
+              query: `${this.searchWord} ${this.near}`
             }
           })
             .then(res => {
               if (res) {
-                const data = {searchWord: this.searchWord, location: this.location};
+                const data = {q: this.searchWord, near: this.near};
 
                 this.$store.commit(Types.SEARCH_TASTYLOAD, data);
                 this.$store.commit(Types.SEARCH_RESULT, res.data);

@@ -3,7 +3,7 @@
     <ul class="resultsView">
       <li v-for="(result, idx) in results" class="resultCard">
         <div class="cardHolder">
-          <div class="placeArea" @mouseover="onMouseOver(result, idx)" @mouseleave="onMouseLeave()" @click="onClick(idx)">
+          <div class="placeArea" @mouseover="onMouseOver(result, idx)" @mouseleave="onMouseLeave()" @click="onClick(idx, result.place_name, result.id)">
             <div>{{idx+1}}. {{result.place_name}}</div>
             <div>{{result.address_name}}</div>
             <div>{{result.phone}}</div>
@@ -23,8 +23,11 @@
     data() {
       return {}
     },
-    computed:
-      mapState({results: 'searchResult',}),
+    computed: {
+      results: function () {
+        return this.$store.state.searchResult;
+      }
+    },
     methods: {
       onMouseOver: function (result, idx) {
         this.$emit('mouseover', idx)
@@ -32,10 +35,8 @@
       onMouseLeave: function () {
         this.$emit('mouseleave')
       },
-      onClick: function(idx) {
-        const {address_name, place_name, id} = this.results[idx];
-
-        console.log("click", address_name, place_name, id)
+      onClick: function (idx, placeName, id) {
+        this.$router.push({name: 'detail', query: {store: placeName, id: id}, params: {placeInfo: this.results[idx]}});
       }
     }
   }

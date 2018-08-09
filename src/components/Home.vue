@@ -8,7 +8,7 @@
           현지 전문가들이 남긴 간단한 팁도 읽어보세요.</h5>
       </div>
       <input type="text" placeholder="검색" v-model="searchWord" v-on:keyup.enter="clickSearch()"/>
-      <input type="text" placeholder="지역" v-model="location" v-on:keyup.enter="clickSearch()"/>
+      <input type="text" placeholder="지역" v-model="near" v-on:keyup.enter="clickSearch()"/>
       <button v-on:click="clickSearch()">Search</button>
     </div>
   </div>
@@ -23,14 +23,14 @@
     data() {
       return {
         searchWord: '',
-        location: '판교',
+        near: '판교',
       }
     },
     methods: {
       clickSearch: function () {
-        const data = {searchWord: this.searchWord, location: this.location};
+        const data = {q: this.searchWord, near: this.near};
 
-        if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.location)) {
+        if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.near)) {
           this.$store.commit(Types.SEARCH_TASTYLOAD, data);
           this.$router.push({name: 'explore', query: data});
         } else {

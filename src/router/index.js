@@ -7,6 +7,7 @@ import Explore from '@/components/Explore'
 import Join from '@/components/Join'
 import Login from '@/components/Login'
 import Profile from '@/components/Profile'
+import Detail from '@/components/Detail'
 
 Vue.use(Router)
 
@@ -20,6 +21,7 @@ export default new Router(
           {path: '/join', name: 'join', component: Join},
           {path: '/login', name: 'login', component: Login},
           {path: '/profile', name: 'profile', component: Profile},
+          {path: '/detail', name: 'detail', component: Detail, props: true},
         ]
       },
       {path: '*', component: NotFound}
