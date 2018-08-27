@@ -1,6 +1,6 @@
 <template>
   <div class="resultContainer">
-    <ul class="resultsView">
+    <ul v-if="results.length > 0" class="resultsView">
       <li v-for="(result, idx) in results" class="resultCard">
         <div class="cardHolder">
           <div class="placeArea" @mouseover="onMouseOver(result, idx)" @mouseleave="onMouseLeave()" @click="onClick(idx, result.place_name, result.id)">
@@ -12,6 +12,10 @@
       </li>
     </ul>
 
+    <div v-else class="emptyResult">
+      <div>찾으시는 결과가 없습니다. 다른 곳을 검색해보세요.</div>
+    </div>
+
   </div>
 </template>
 
@@ -20,9 +24,6 @@
 
   export default {
     name: "result-container",
-    data() {
-      return {}
-    },
     computed: {
       results: function () {
         return this.$store.state.searchResult;
@@ -71,6 +72,10 @@
   .cardHolder {
     margin: 0;
     padding: 20px;
+  }
+  .emptyResult {
+    background-color: #fff;
+    padding: 50% 0;
   }
 
 </style>

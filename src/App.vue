@@ -30,23 +30,8 @@
     margin: 0;
   }
   a {
-    color: #fff;
     text-decoration: none;
-    outline: none
-  }
-  a:hover, a:active {
-    text-decoration: none;
-    color: #fff;
-    background-color: #f59000;
-  }
-
-  .btn_basic {
-    width: 100px;
-    height:30px;
-    color: #FFFFFF;
-    font-size: 15px;
-    font-weight: bold;
-    background-color: #0c2946;
+    outline: none;
   }
 
 </style>

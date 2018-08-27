@@ -35,7 +35,7 @@
       const {q, near} = this.$route.query;
 
       return {
-        userName: '정조이',
+        userName: '',
         searchWord: q ? q : '',
         near: near ? near : '',
       }
@@ -76,6 +76,9 @@
 </script>
 
 <style scoped>
+  a {
+    color: #ffffff;
+  }
   h5 {
     margin: 5px;
   }

@@ -8,6 +8,7 @@ import Join from '@/components/Join'
 import Login from '@/components/Login'
 import Profile from '@/components/Profile'
 import Detail from '@/components/Detail'
+import Settings from '@/components/Settings'
 
 Vue.use(Router)
 
@@ -17,11 +18,12 @@ export default new Router(
       {path: '/', name: 'home', component: Home},
       {
         path: '/', component: HelloWorld, children: [
-          {path: '/explore', name: 'explore', component: Explore},
-          {path: '/join', name: 'join', component: Join},
-          {path: '/login', name: 'login', component: Login},
-          {path: '/profile', name: 'profile', component: Profile},
-          {path: '/detail', name: 'detail', component: Detail, props: true},
+          {path: '/explore',  name: 'explore',  component: Explore},
+          {path: '/join',     name: 'join',     component: Join},
+          {path: '/login',    name: 'login',    component: Login},
+          {path: '/profile',  name: 'profile',  component: Profile},
+          {path: '/detail',   name: 'detail',   component: Detail,     props: true},
+          {path: '/settings', name: 'settings', component: Settings,},
         ]
       },
       {path: '*', component: NotFound}

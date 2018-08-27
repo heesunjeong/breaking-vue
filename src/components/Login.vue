@@ -2,15 +2,15 @@
   <div class="component_login">
     <h1>로그인</h1>
 
-    <form class="frm_login" @submit="onLogin">
+    <form class="frm_login" action="/user_login" method="post">
       <div>
         <p>이메일</p>
-        <input type="text" v-model="email" placeholder="이메일을 입력하세요."/>
+        <input type="text" v-model="email" name="username" placeholder="이메일을 입력하세요."/>
       </div>
 
       <div>
         <p>비밀번호</p>
-        <input type="password" v-model="passwd" placeholder="비밀번호를 입력하세요."/>
+        <input type="password" v-model="passwd" name="password" placeholder="비밀번호를 입력하세요."/>
       </div>
 
       <div class="btn_login_all">
