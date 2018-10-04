@@ -41,7 +41,6 @@
       }
     },
     mounted: function () {
-      console.log(this.searchWord, this.$route.query.q)
       this.fetchData();
     },
     methods: {
@@ -52,7 +51,7 @@
           })*/
 
         if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.near)) {
-          axios.get('http://break.api.dev.9rum.cc/maps/place', {
+          axios.get('/api/maps/place', {
             params: {
               query: `${this.searchWord} ${this.near}`
             }
