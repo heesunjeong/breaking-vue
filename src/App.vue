@@ -34,4 +34,15 @@
     outline: none;
   }
 
+  .datepicker {
+    background: transparent;
+    border: none;
+    color: #4e595d;
+    font-family: inherit;
+    outline: none;
+    width: 100%;
+    height: 30px;
+    font-size: 15px;
+  }
+
 </style>

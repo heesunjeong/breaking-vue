@@ -25,7 +25,7 @@
       </div>
 
       <div>
-        <label for="inputName">이름</label>
+        <label for="inputName">이름<span class="require">*</span></label>
         <div class="decor">
           <input id="inputName" type="text" class="input_txt" v-model="name"/>
         </div>
@@ -41,20 +41,25 @@
       </div>
 
       <div>
-        <label for="inputBirth">생년월일</label>
+        <label>생년월일</label>
         <div class="decor">
-          <input id="inputBirth" type="date" class="input_txt" v-model="birth"/>
+          <input type="hidden" id="birth" name="birth" v-model="birth"/>
+          <datepicker input-class="datepicker" v-model="birth" :language="ko" :format="formatDate" @selected="checkedDate" :required="true"></datepicker>
         </div>
       </div>
 
       <div class="profile">
-        <p class="area_inline">프로필사진</p>
-        <input type="text" class="input_txt" readonly/>
-        <button type="button" class="btn_basic" @click="selectProfileImg">파일선택</button>
+        <label class="area_inline">프로필사진</label>
+        <input type="file" v-bind:class="{input_file:profileImg}" @change="selectProfileImg"/>
+
+        <div v-if="profileImg">
+          <img :src="profileImg"/>
+          <p class="img_cancel" @click="deleteProgileImg">X</p>
+        </div>
       </div>
 
-      <div>
-        <button type="button" class="btn_basic" @click="register">등록</button>
+      <div class="btn_join">
+        <button type="button" class="btn_basic" @click="joinUser">등록</button>
       </div>
     </div>
   </div>
@@ -62,6 +67,16 @@
 
 <script>
   import axios from 'axios';
+  import Vue from 'vue'
+  import VueMomentJS from 'vue-momentjs'
+  import moment from 'moment'
+  import Datepicker from 'vuejs-datepicker'
+  import {ko} from 'vuejs-datepicker/dist/locale'
+  import Noty from 'vuejs-noty'
+  import 'vuejs-noty/dist/vuejs-noty.css'
+
+  Vue.use(VueMomentJS, moment);
+  Vue.use(Noty, {theme: 'relax',timeout: 1000, progressBar: false, layout: 'topCenter'});
 
   export default {
     name: "Join",
@@ -73,47 +88,116 @@
         name: '',
         gender: 'N',
         birth: '',
-        interface_type: 'b'
+        ko: ko,
+        interface_type: 'b',
+        profileImg: ''
       }
     },
+    components: {
+      Datepicker
+    },
     methods: {
-      register: function () {
+      joinUser: function () {
         // validation check
 
         if (this.validationCheck()) {
-          axios.post('/api/user/register', {
-            email: this.email,
-            password: this.password,
-            name: this.name,
-            gender: this.gender,
-            birth: this.birth
-          }).then(res => {
-            if (res) {
-              console.log(res);
+          if(confirm("회원가입 하시겠습니까 ?")){
+            axios.post('/api/user/register', {
+              email: this.email,
+              password: this.password,
+              name: this.name,
+              gender: this.gender,
+              birth: this.birth
+            }).then(res => {
+              if (res) {
+                console.log(res);
 
-              if (!!res.data) {
-                alert("우리 오늘 맛집 뿌셔?에 오신걸 환영합니다. :) ");
+                if (!!res.data) {
+                  alert("우리 오늘 맛집 뿌셔?에 오신걸 환영합니다. :) ");
+                }
               }
-            }
-          }).catch(error => {
-            console.log(error)
-          })
-
+            }).catch(error => {
+              console.log(error)
+            })
+          }
         } else {
-
+          this.$noty.error("입력하신 정보를 다시 확인해주세요.");
         }
       },
       validationCheck: function () {
+        if(!this.email){
+          this.$noty.error("이메일을 입력하세요.");
+          email.focus();
+          return false;
+        }
+
+        if(!this.password){
+          this.$noty.error("비밀번호를 입력하세요.");
+          password.focus();
+          return false;
+        }
+
+        if(!this.confirmPassword){
+          this.$noty.error("비밀번호 확인을 해주세요.");
+          confirmPassword.focus();
+          return false;
+        }
+
         if (this.password !== this.confirmPassword) {
-          alert("비밀번호가 일치하지 않습니다.")
+          this.$noty.error("입력하신 비밀번호가 일치하지않습니다.");
+          passwd.focus();
+          return false;
+        }
+
+        if(!this.name){
+          this.$noty.error("이름을 입력하세요.");
+          name.focus();
           return false;
         }
 
         return true;
       },
-      selectProfileImg: function () {
-        alert("개발중 '-'");
-      }
+      selectProfileImg: function(e){
+        var files = e.target.files || e.dataTransfer.files;
+
+        if (!files.length){
+          return;
+        } else {
+          var file = files[0];
+          var image = new Image();
+          var reader = new FileReader();
+          var vm = this;
+
+          if(file.type.indexOf("image") > -1){
+            reader.onload = (e) => {
+              this.profileImg = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            this.imgName = file.name
+          }else{
+            this.$noty.error('이미지 파일만 가능합니다.', {
+              timeout: 1000,
+              progressBar: true,
+              layout: 'center'
+            })
+          }
+        }
+      },
+      deleteProgileImg: function(){
+        this.profileImg = ''
+      },
+      formatDate: function (date) {
+        return moment(date).format('YYYY-MM-DD')
+      },
+      checkedDate: function (date) {
+        let selectDate = moment(date).format('YYYYMMDD');
+        let now = moment(new Date()).format('YYYYMMDD');
+
+        if (selectDate > now) {
+          console.log('noooooooooooo');
+        }
+      },
     }
   }
 </script>
@@ -121,8 +205,7 @@
 <style scoped>
   .component_join {
     min-height: 300px;
-    padding: 40px;
-    width: 620px;
+    padding: 10px 74px 150px 74px;
     background: #fff;
     overflow: hidden;
     width: 410px;
@@ -143,18 +226,47 @@
     font-size: 15px;
   }
   .frm_join > div {
-    margin-bottom: 20px;
+    margin-bottom: 17px;
+    text-align: left;
   }
+  .frm_join label {
+    font-size: 15px;
+    font-weight: bold;
+  }
+
   .area_inline {
     float: left;
+    margin-right: 10px;
   }
-  .profile > p {
-    line-height: 40px;
+
+  #inputGender {
+    text-align: center;
   }
-  .profile > input {
-    width: 200px !important;
-    background-color: #E6E6E6;
+
+  .profile .input_file {
+    float: left;
+    width: 185px;
   }
+
+  .profile img {
+    width: 130px;
+  }
+
+  .img_cancel {
+    color: #ffffff;
+    background-color: #ff0000;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    font-size: 5px;
+    text-align: center;
+    float: right;
+  }
+
+  .btn_join {
+    margin: 50px 0 17px 150px;
+  }
+
   .decor {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
