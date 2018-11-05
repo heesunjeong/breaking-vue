@@ -2,23 +2,23 @@
   <div class="component_login">
     <h2>로그인</h2>
 
-    <form class="frm_login" action="/api/login" method="post" ><!--action="/api/login" method="post" @submit="onLogin"-->
+    <div class="frm_login"><!--action="/api/login" method="post" @submit="onLogin"-->
       <div>
         <p>이메일</p>
         <div class="decor">
-          <input type="text" v-model="email" name="username" placeholder="이메일을 입력하세요."/>
+          <input type="text" v-model="email" name="username" placeholder="이메일을 입력하세요." @keyup.enter="onLogin"/>
         </div>
       </div>
 
       <div>
         <p>비밀번호</p>
         <div class="decor">
-          <input type="password" v-model="password" name="password" placeholder="비밀번호를 입력하세요."/>
+          <input type="password" v-model="password" name="password" placeholder="비밀번호를 입력하세요." @keyup.enter="onLogin"/>
         </div>
       </div>
 
       <div class="btn_login_all">
-        <button type="submit" class="btn_basic">로그인</button>
+        <button type="submit" class="btn_basic" @click="onLogin">로그인</button>
         <div class="btn_google">
           <!--<img src="../image/goole.png"/>-->
           <button type="button" class="btn_basic" @click="googleLogin">
@@ -30,12 +30,12 @@
           <router-link :to="{name: 'join'}">회원가입</router-link>
         </button>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios';
+  import * as actions from '../actions/userActions';
 
   export default {
     name: 'Login',
@@ -47,17 +47,10 @@
     },
     methods: {
       onLogin: function () {
-        axios.post('/api/login', {
-          email: this.email,
-          password: this.password
-        }).then(res => {
-          if (res) {
-            console.log(res);
-          }
-        }).catch(error => {
-          alert("로그인에 실패하였습니다.\n이메일 혹 비밀번호를 다시 한번 확인해주세요.")
-        })
-
+        const res = actions.login(this.email, this.password)
+          .then(data => {
+            !!data ? this.$router.push({name: 'home'}) : '';
+          });
       },
       googleLogin: function () {
         alert("개발중 '-'");
@@ -117,7 +110,6 @@
     float: left;
     margin-right: 10px;
   }
-
   .decor {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;

@@ -12,7 +12,7 @@
     </div>
     <div class="rightSide">
       <div v-if="!!userName" class="user">
-        <router-link :to="{name: 'profile'}">{{userName}}</router-link>
+        <router-link :to="{name: 'profile'}">{{userName.substring(0, 5)}}{{userName.length > 5 ? '...' : ''}} 님</router-link>
       </div>
 
       <div v-else class="loggedOutMenu">
@@ -31,11 +31,11 @@
 
   export default {
     name: "break-header",
+    props: ["userName"],
     data() {
       const {q, near} = this.$route.query;
 
       return {
-        userName: '',
         searchWord: q ? q : '',
         near: near ? near : '',
       }
@@ -45,11 +45,6 @@
     },
     methods: {
       fetchData: function () {
-        /*axios.get(`http://localhost:8021/maps/location/${this.location}`)
-          .then(res=> {
-            console.log("location", res.data);
-          })*/
-
         if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.near)) {
           axios.get('/api/maps/place', {
             params: {

@@ -1,12 +1,13 @@
 <template>
   <div class="mainWrap">
-    <break-header></break-header>
+    <break-header v-bind:userName="userName"></break-header>
     <router-view/>
   </div>
 </template>
 
 <script>
   import Header from './Header.vue';
+  import * as Utils from "../utils/utils";
 
   export default {
     name: 'HelloWorld',
@@ -14,7 +15,13 @@
       'break-header': Header
     },
     data() {
-      return {}
+      return {
+        userName: this.userName = Utils.getUserName()
+      }
+    },
+    updated: function() {
+      console.log("updated...")
+      this.userName = Utils.getUserName();
     }
   }
 </script>

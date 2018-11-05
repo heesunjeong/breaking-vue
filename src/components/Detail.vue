@@ -50,8 +50,8 @@
 </template>
 
 <script>
-  import axios from 'axios';
   import _ from 'lodash';
+  import * as actions from '../actions/storeActions';
 
   export default {
     name: "Detail",
@@ -74,48 +74,27 @@
     },
     methods: {
       getStoreInfo: function (id, storeName) {
-        axios.get('/api/maps/place', {
-          params: {
-            query: `${storeName}`
-          }
-        }).then(res => {
-          if (res) {
-            this.storeInfo = _.head(_.filter(res.data.documents, {id: id}));
-          }
-        }).catch(error => {
-          console.log(error)
-        })
+        actions.getStoreInfo(storeName)
+          .then(res => this.storeInfo = _.head(_.filter(res, {id: id})))
       },
       getReviewInfo: function (id) {
-        axios.get(`/api/review/${id}`)
-          .then(res => {
-            if (res) {
-              this.loadReview = res.data;
-            }
-          }).catch(error => {
-          console.log(error)
-        })
+        actions.getReviewInfo(id)
+          .then(res => this.loadReview = res);
       },
       onClick: function () {
         const {id} = this.storeInfo;
 
-        axios.post('/api/review/create', {
-          storeId: id,
-          userId: "5b98d56151d3a436f8a507ed",
-          contents: this.review
-        }).then(res => {
-          if (res) {
-            if (!!res) {
-              alert("리뷰가 등록되었습니다.");
-              this.getReviewInfo(this.storeInfo.id)
-            } else {
-              alert("리뷰등록을 실패하였습니다.\n잠시 후에 다시 시도해주세요.");
-            }
-          }
-        }).catch(error => {
-          console.log(error)
-        })
+        if (!this.review.replace(/\s|　/gi, '')) {
+          alert("리뷰 내용을 입력해주세요.")
+          return;
+        }
 
+        actions.saveReview(id, this.review)
+          .then(res => res ? this.onSuccessSave() : this.$router.push({name: 'login'}));
+      },
+      onSuccessSave: function () {
+        this.getReviewInfo(this.storeInfo.id);
+        this.review = '';
       }
     },
   }
