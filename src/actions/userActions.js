@@ -34,14 +34,14 @@ export function logout(router) {
   }
 }
 
-export function getUserInfo() {
+export function getUserInfo(router) {
   axios.defaults.headers.common['Authorization'] = authToken();
   return axios.get('/api/user/info')
     .then(res => {
       return res.data;
     }).catch(error => {
       alert("세션이 만료되었습니다. 다시 로그인해주세요.")
-      logout();
+      logout(router);
       //TODO 로그인페이지로 이동시키기
     })
 }

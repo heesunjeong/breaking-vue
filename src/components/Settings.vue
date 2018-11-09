@@ -68,7 +68,7 @@
       }
     },
     mounted: function () {
-      actions.getUserInfo()
+      actions.getUserInfo(this.$router)
         .then(data => {
           this.userInfo = data;
         });
