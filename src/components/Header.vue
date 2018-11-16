@@ -12,7 +12,7 @@
     </div>
     <div class="rightSide">
       <div v-if="!!userName" class="user">
-        <router-link :to="{name: 'profile'}">{{userName.substring(0, 5)}}{{userName.length > 5 ? '...' : ''}} 님</router-link>
+        <router-link :to="{name: 'profile'}" >{{userName.substring(0, 5)}}{{userName.length > 5 ? '...' : ''}} 님</router-link>
       </div>
 
       <div v-else class="loggedOutMenu">
@@ -38,6 +38,7 @@
       return {
         searchWord: q ? q : '',
         near: near ? near : '',
+        userId: Utils.getUserId()
       }
     },
     mounted: function () {

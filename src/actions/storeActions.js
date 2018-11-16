@@ -11,7 +11,7 @@ export function getStoreInfo(storeName) {
         return res.data.documents;
       }
     }).catch(error => {
-      handleError(error);
+      //handleError(error);
     })
 };
 
@@ -20,7 +20,7 @@ export function getReviewInfo(storeId) {
     .then(res => {
       return res.data;
     }).catch(error => {
-      handleError(error);
+      //handleError(error);
     })
 }
 
@@ -41,7 +41,7 @@ export function saveReview(id, review) {
       }
       return !!res.data;
     }).catch(error => {
-      //handleError(error);
+      handleError(error);
     })
 }
 
@@ -57,7 +57,7 @@ export function editReview(review) {
       }
       return !!res;
     }).catch(error => {
-      //handleError(error);
+      handleError(error);
     })
 }
 
@@ -73,6 +73,6 @@ export function deleteReview(id) {
       }
       return !!res.data;
     }).catch(error => {
-      //handleError(error);
+      handleError(error);
     })
 }

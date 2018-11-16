@@ -19,6 +19,6 @@ export function getPlace(searchWord, location) {
       }
     })
     .catch(error => {
-      handleError(error);
+      //handleError(error);
     })
 }

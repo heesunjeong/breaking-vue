@@ -110,8 +110,6 @@
               birth: this.birth
             }).then(res => {
               if (res) {
-                console.log(res);
-
                 if (!!res.data) {
                   alert("우리 오늘 맛집 뿌셔?에 오신걸 환영합니다. :) ");
                 }

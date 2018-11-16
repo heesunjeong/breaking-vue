@@ -9,6 +9,8 @@ import Login from '@/components/Login'
 import Profile from '@/components/Profile'
 import Detail from '@/components/Detail'
 import Settings from '@/components/Settings'
+import changePassword from '@/components/changePassword'
+import findPassword from '@/components/findPassword'
 
 Vue.use(Router)
 
@@ -18,12 +20,14 @@ export default new Router(
       {path: '/', name: 'home', component: Home},
       {
         path: '/', component: HelloWorld, children: [
-          {path: '/explore',  name: 'explore',  component: Explore},
-          {path: '/join',     name: 'join',     component: Join},
-          {path: '/login',    name: 'login',    component: Login},
-          {path: '/profile',  name: 'profile',  component: Profile},
-          {path: '/detail',   name: 'detail',   component: Detail,     props: true},
+          {path: '/explore', name: 'explore', component: Explore},
+          {path: '/join', name: 'join', component: Join},
+          {path: '/login', name: 'login', component: Login},
+          {path: '/profile', name: 'profile', component: Profile},
+          {path: '/detail', name: 'detail', component: Detail, props: true},
           {path: '/settings', name: 'settings', component: Settings,},
+          {path: '/changePassword', name: 'changePassword', component: changePassword,},
+          {path: '/findPassword', name: 'findPassword', component: findPassword,},
         ]
       },
       {path: '*', component: NotFound}

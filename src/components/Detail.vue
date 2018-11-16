@@ -36,7 +36,7 @@
 
       <div class="reviews">
         <ul class="review_list">
-          <li v-for="(review, idx) in roadReviewList">
+          <li class="review" v-for="(review, idx) in roadReviewList">
             <div class="review_photo"></div>
 
             <div class="review_comment">
@@ -48,9 +48,9 @@
             </div>
 
             <div class="review_info">
-              <span class="user_name">{{review.author.name}}</span>
+              <span class="user_name"><router-link :to="{name: 'profile', query: {u : review.author.id}}">{{review.author.name}}</router-link></span>
               <span class="time_write">{{review.mod_at}}</span>
-              <span v-if="!!myEmail && review.author.email === myEmail" class="btn_edit">
+              <span v-if="!!myId && review.author.id === myId" class="btn_edit">
                 <span v-if="editing === idx" @click="cancelEditing()">취소</span>
                 <span v-else>
                   <span @click="onClickEdit(idx, review.contents)">수정</span> /
@@ -69,6 +69,7 @@
 <script>
   import _ from 'lodash';
   import * as actions from '../actions/storeActions';
+  import * as utils from '../utils/utils'
 
   export default {
     name: "Detail",
@@ -79,7 +80,7 @@
         roadReviewList: '',
         editingReview: '',
         storeInfo: this.placeInfo ? this.placeInfo : '',
-        myEmail: localStorage.getItem('user_token') ? JSON.parse(localStorage.getItem('user_token')).email : '',
+        myId: utils.getUserId(),
         editing: false,
       }
     },
@@ -311,5 +312,11 @@
     margin: 0;
     padding-top: 3px;
     font-size: 11px;
+  }
+  .reviews .review {
+    margin-bottom: 15px;
+  }
+  .detail a, a:link, a:visited {
+    color: #000;
   }
 </style>

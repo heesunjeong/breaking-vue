@@ -3,22 +3,27 @@
     <h2>로그인</h2>
 
     <div class="frm_login"><!--action="/api/login" method="post" @submit="onLogin"-->
-      <div>
+      <div class="login_pad">
         <p>이메일</p>
         <div class="decor">
           <input type="text" v-model="email" name="username" placeholder="이메일을 입력하세요." @keyup.enter="onLogin"/>
         </div>
       </div>
 
-      <div>
+      <div class="login_pad">
         <p>비밀번호</p>
         <div class="decor">
           <input type="password" v-model="password" name="password" placeholder="비밀번호를 입력하세요." @keyup.enter="onLogin"/>
         </div>
       </div>
 
-      <div class="btn_login_all">
+      <div class="find_password">
+        <router-link :to="{name: 'findPassword'}">비밀번호 찾기</router-link>
+      </div>
+
+      <div class="btn_login_all login_pad">
         <button type="submit" class="btn_basic" @click="onLogin">로그인</button>
+
         <div class="btn_google">
           <!--<img src="../image/goole.png"/>-->
           <button type="button" class="btn_basic" @click="googleLogin">
@@ -26,10 +31,10 @@
             로 그 인
           </button>
         </div>
-        <button type="button" class="btn_basic">
-          <router-link :to="{name: 'join'}">회원가입</router-link>
-        </button>
+
+        <button type="button" class="btn_basic" @click="onJoin">회원가입</button>
       </div>
+
     </div>
   </div>
 </template>
@@ -47,19 +52,34 @@
     },
     methods: {
       onLogin: function () {
-        const res = actions.login(this.email, this.password)
-          .then(data => {
-            !!data ? this.$router.push({name: 'home'}) : '';
-          });
+        if (this.validate()) {
+          actions.login(this.email, this.password)
+            .then(data => {
+              !!data ? this.$router.push({name: 'home'}) : '';
+            });
+        }
       },
       googleLogin: function () {
         alert("개발중 '-'");
+      },
+      onJoin: function () {
+        this.$router.push({name: 'join'});
+      },
+      validate: function () {
+        if (!this.email || !this.password) {
+          alert("이메일 혹은 비밀번호를 입력해주세요.");
+          return false;
+        }
+        else {
+          return true;
+        }
       }
     }
   }
 </script>
 
-<style>
+<style scoped>
+
   .btn_google {
     width: 150px;
     float: left;
@@ -103,8 +123,8 @@
     margin-top: 20px;
     margin-bottom: 20px;
   }
-  .frm_login > div {
-    margin-bottom: 50px;
+  .frm_login > .login_pad {
+    margin-bottom: 30px;
   }
   .btn_login_all button:first-child {
     float: left;
@@ -161,8 +181,16 @@
     min-width: 85px;
     width: auto;
   }
-  a:link, a:visited {
+  button > a:link, a:visited {
     color: #ffffff;
+    text-decoration: none;
+  }
+  .find_password {
+    text-align: left;
+    padding: 10px 0 20px 0;
+  }
+  .component_login .find_password a:link, a:visited {
+    color: #0a2747;
     text-decoration: none;
   }
 </style>

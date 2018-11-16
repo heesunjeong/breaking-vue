@@ -20,7 +20,6 @@
       }
     },
     updated: function() {
-      console.log("updated...")
       this.userName = Utils.getUserName();
     }
   }
