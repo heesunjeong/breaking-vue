@@ -9,7 +9,9 @@ const store = new Vuex.Store(
   {
     state: {
       searchCondition: {searchWord: '', location: ''},
-      searchResult: {}
+      searchResult: {},
+      meta: {},
+      currentPage: 1
 
     },
     mutations: {
@@ -17,6 +19,7 @@ const store = new Vuex.Store(
         state.searchCondition = payload;
       },
       [Types.SEARCH_RESULT]: (state, payload) => {
+        state.meta = payload.meta;
         state.searchResult = payload.documents;
       }
     }

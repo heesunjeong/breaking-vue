@@ -66,7 +66,6 @@
       this.getProfileInfo();
     },
     beforeRouteUpdate: function (to, from, next) {
-      console.log("-0--", to.query, from.query)
       if (to.query !== from.query) {
         next();
         this.getProfileInfo();

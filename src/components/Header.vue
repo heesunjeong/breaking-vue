@@ -12,7 +12,7 @@
     </div>
     <div class="rightSide">
       <div v-if="!!userName" class="user">
-        <router-link :to="{name: 'profile'}" >{{userName.substring(0, 5)}}{{userName.length > 5 ? '...' : ''}} 님</router-link>
+        <router-link :to="{name: 'profile'}">{{userName.substring(0, 5)}}{{userName.length > 5 ? '...' : ''}} 님</router-link>
       </div>
 
       <div v-else class="loggedOutMenu">
@@ -28,6 +28,7 @@
   import Types from '../store/types'
   import axios from 'axios'
   import * as Utils from '../utils/utils'
+  import * as actions from '../actions/mapActions'
 
   export default {
     name: "break-header",
@@ -47,23 +48,21 @@
     methods: {
       fetchData: function () {
         if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.near)) {
-          axios.get('/api/maps/place', {
-            params: {
-              query: `${this.searchWord} ${this.near}`
-            }
-          })
+
+          actions.getPlace(this.searchWord, this.near)
             .then(res => {
               if (res) {
                 const data = {q: this.searchWord, near: this.near};
 
                 this.$store.commit(Types.SEARCH_TASTYLOAD, data);
-                this.$store.commit(Types.SEARCH_RESULT, res.data);
+                this.$store.commit(Types.SEARCH_RESULT, res);
                 this.$router.push({name: 'explore', query: data});
               }
             })
             .catch(error => {
               console.log(error)
             })
+
         }
       }
     },

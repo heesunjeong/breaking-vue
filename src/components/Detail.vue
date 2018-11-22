@@ -57,8 +57,12 @@
                   <span @click="deleteReview(review.id)">삭제</span>
                 </span>
               </span>
+
             </div>
           </li>
+
+          <Paging v-if="roadReviewList.length" :totalData="roadReviewList.length" :pageCount="5" :dataPerPage="5" @onChange="changePages"/>
+
         </ul>
       </div>
     </div>
@@ -70,9 +74,11 @@
   import _ from 'lodash';
   import * as actions from '../actions/storeActions';
   import * as utils from '../utils/utils'
+  import Paging from "./Paging";
 
   export default {
     name: "Detail",
+    components: {Paging},
     props: ["placeInfo",],
     data() {
       return {
@@ -150,6 +156,10 @@
           this.writingReview = this.writingReview.substr(0, 200);
           alert("리뷰는 200자까지 입력할 수 있어요.");
         }
+      },
+      changePages: function () {
+        //TODO 리뷰 페이징
+        console.log("changePages")
       }
     },
   }

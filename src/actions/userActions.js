@@ -63,3 +63,14 @@ export function getUserInfo(userId) {
       handleError(error);
     })
 }
+
+export function findPassword(email) {
+  axios.defaults.headers.common['Authorization'] = authToken();
+
+  return axios.get(`/api/user/findPassword/${email}`)
+    .then(res => {
+      return res.data;
+    }).catch(error => {
+      handleError(error);
+    })
+}

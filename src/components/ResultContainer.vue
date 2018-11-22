@@ -1,7 +1,8 @@
 <template>
   <div class="resultContainer">
+
     <ul v-if="results.length > 0" class="resultsView">
-      <li v-for="(result, idx) in results" class="resultCard">
+      <li v-for="(result, idx) in store.searchResult" class="resultCard">
         <div class="cardHolder">
           <div class="placeArea" @mouseover="onMouseOver(result, idx)" @mouseleave="onMouseLeave()" @click="onClick(idx, result.place_name, result.id)">
             <div>{{idx+1}}. {{result.place_name}}</div>
@@ -10,6 +11,9 @@
           </div>
         </div>
       </li>
+
+      <Paging :totalData="store.meta.pageable_count" :pageCount="5" :dataPerPage="15" @onChange="changePages"/>
+
     </ul>
 
     <div v-else class="emptyResult">
@@ -20,13 +24,22 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
+  import * as actions from '../actions/mapActions'
+  import types from '../store/types'
+  import Paging from "./Paging";
 
   export default {
     name: "result-container",
+    components: {Paging},
     computed: {
       results: function () {
         return this.$store.state.searchResult;
+      },
+      meta: function () {
+        return this.$store.state.meta;
+      },
+      store: function () {
+        return this.$store.state;
       }
     },
     methods: {
@@ -38,6 +51,25 @@
       },
       onClick: function (idx, placeName, id) {
         this.$router.push({name: 'detail', query: {store: placeName, id: id}, params: {placeInfo: this.results[idx]}});
+      },
+      changePages: function (selectedPage) {
+        const {q, near} = this.$route.query;
+
+        actions.getPlace(q, near, selectedPage)
+          .then(res => {
+            if (res) {
+              const data = {q, near};
+
+              this.$store.commit(types.SEARCH_TASTYLOAD, data);
+              this.$store.commit(types.SEARCH_RESULT, res);
+              this.$router.push({name: 'explore', query: data});
+
+              window.scrollTo(0, 0);
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
       }
     }
   }
@@ -77,6 +109,5 @@
     background-color: #fff;
     padding: 50% 0;
   }
-
 </style>
 

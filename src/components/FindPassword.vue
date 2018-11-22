@@ -6,19 +6,51 @@
       <hr>
       <div class="email_form">
         <label for="email">이메일주소:</label>
-        <input id="email" type="text" name="email" class="formStyle" value="">
+        <input id="email" type="email" name="email" class="formStyle" v-model="email" placeholder="Enter your email" @keyup.enter="onConfirm"/>
         <div>
-          <input type="submit" class="greenButton" tabindex="5" value="제출">
+          <input type="button" class="greenButton" tabindex="5" value="확인" @click="onConfirm"/>
         </div>
       </div>
     </div>
   </div>
-  </div>
 </template>
 
 <script>
+  import * as actions from '../actions/userActions';
+
   export default {
-    name: "FindPassword"
+    name: "FindPassword",
+    data() {
+      return {
+        email: '',
+      }
+    },
+    methods: {
+      onConfirm: function () {
+        if (this.validate()) {
+          actions.findPassword(this.email)
+            .then(res => {
+              if (res) {
+                alert('이메일로 새로운 비밀번호를 보냈습니다. :)');
+                this.$router.push({name: 'login'});
+              } else {
+                alert('이메일 주소를 다시 확인해주세요.');
+              }
+            });
+        } else {
+          alert('이메일 주소를 다시 확인해주세요.');
+          this.email = '';
+        }
+      },
+      validate: function () {
+        if (this.email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+    }
   }
 </script>
 
