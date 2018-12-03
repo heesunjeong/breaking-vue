@@ -61,7 +61,7 @@
             </div>
           </li>
 
-          <Paging v-if="roadReviewList.length" :totalData="roadReviewList.length" :pageCount="5" :dataPerPage="5" @onChange="changePages"/>
+          <Paging v-if="totalCount" :totalData="totalCount" :pageCount="5" :dataPerPage="5" @onChange="changePages"/>
 
         </ul>
       </div>
@@ -72,7 +72,8 @@
 
 <script>
   import _ from 'lodash';
-  import * as actions from '../actions/storeActions';
+  import * as reviewActions from '../actions/reviewActions';
+  import * as mapActions from '../actions/mapActions';
   import * as utils from '../utils/utils'
   import Paging from "./Paging";
 
@@ -88,30 +89,39 @@
         storeInfo: this.placeInfo ? this.placeInfo : '',
         myId: utils.getUserId(),
         editing: false,
+        totalCount: 0
       }
     },
 
     mounted: function () {
-      const {id, store} = this.$route.query;
-
       if (!this.storeInfo) {
-        this.getStoreInfo(id, store)
+        this.getStoreInfo();
       }
 
-      this.getReviewInfo(id);
+      this.getCountReview();
+      this.getReviewInfo();
     },
 
     methods: {
-      getStoreInfo: function (id, storeName) {
-        actions.getStoreInfo(storeName)
+      getStoreInfo: function () {
+        const {id, store} = this.$route.query;
+
+        mapActions.getStoreInfo(store)
           .then(res => this.storeInfo = _.head(_.filter(res, {id: id})))
       },
 
-      getReviewInfo: function (id) {
-        actions.getReviewInfo(id)
+      getReviewInfo: function (page) {
+        const {id} = this.$route.query;
+
+        reviewActions.getReviewInfo(id, !page ? 0 : page-1)
           .then(res => this.roadReviewList = res);
       },
+      getCountReview: function () {
+        const {id} = this.$route.query;
 
+        reviewActions.getCountReview(id)
+          .then(res => this.totalCount = res);
+      },
       saveReview: function () {
         const {id} = this.storeInfo;
 
@@ -120,20 +130,20 @@
           return;
         }
 
-        actions.saveReview(id, this.writingReview)
+        reviewActions.saveReview(id, this.writingReview)
           .then(res => res ? this.onSuccessSave() : this.$router.push({name: 'login'}));
       },
 
       editReview: function (idx, originalReview) {
         originalReview.contents = this.editingReview;
-        actions.editReview(originalReview)
+        reviewActions.editReview(originalReview)
 
         this.editing = false;
         this.editingReview = '';
       },
 
       deleteReview: function (reviewId) {
-        actions.deleteReview(reviewId)
+        reviewActions.deleteReview(reviewId)
           .then(res => res ? this.getReviewInfo(this.storeInfo.id) : this.$router.push({name: 'login'}));
       },
 
@@ -157,9 +167,8 @@
           alert("리뷰는 200자까지 입력할 수 있어요.");
         }
       },
-      changePages: function () {
-        //TODO 리뷰 페이징
-        console.log("changePages")
+      changePages: function (page) {
+        this.getReviewInfo(page);
       }
     },
   }

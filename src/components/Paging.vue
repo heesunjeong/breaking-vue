@@ -9,9 +9,10 @@
 <script>
   export default {
     name: "Paging",
-    props: ['totalData', // 데이터 총 갯수
-            'pageCount', //
-            'dataPerPage' //
+    props: [
+      'totalData', // 데이터 총 갯수
+      'pageCount', //
+      'dataPerPage' //
     ],
     data() {
       return {
@@ -45,7 +46,7 @@
       changePage: function (selectedPage) {
         this.currentPage = selectedPage;
         this.$listeners.onChange(selectedPage);
-        this.onPaging();
+        this.onPaging(selectedPage);
       }
     }
   }

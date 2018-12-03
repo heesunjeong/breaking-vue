@@ -4,7 +4,7 @@
     <ul v-if="results.length > 0" class="resultsView">
       <li v-for="(result, idx) in store.searchResult" class="resultCard">
         <div class="cardHolder">
-          <div class="placeArea" @mouseover="onMouseOver(result, idx)" @mouseleave="onMouseLeave()" @click="onClick(idx, result.place_name, result.id)">
+          <div class="placeArea" @mouseover.passive="onMouseOver(result, idx)" @mouseleav.passive="onMouseLeave()" @click="onClick(idx, result)">
             <div>{{idx+1}}. {{result.place_name}}</div>
             <div>{{result.address_name}}</div>
             <div>{{result.phone}}</div>
@@ -49,8 +49,10 @@
       onMouseLeave: function () {
         this.$emit('mouseleave')
       },
-      onClick: function (idx, placeName, id) {
-        this.$router.push({name: 'detail', query: {store: placeName, id: id}, params: {placeInfo: this.results[idx]}});
+      onClick: function (idx, selectedPlace) {
+        actions.saveStore(selectedPlace);
+
+        this.$router.push({name: 'detail', query: {store: selectedPlace.place_name, id: selectedPlace.id}, params: {placeInfo: this.results[idx]}});
       },
       changePages: function (selectedPage) {
         const {q, near} = this.$route.query;
