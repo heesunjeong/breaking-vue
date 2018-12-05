@@ -54,7 +54,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api' : { target: 'http://break.api.dev.9rum.cc', changeOrigin: true, pathRewrite: {'^/api': ''} }
+        '/api/**': {
+          target: 'http://break.api.dev.9rum.cc',
+          pathRewrite: { '^/api': '' },
+          secure: false,
+          logLevel: 'debug',
+          changeOrigin: true
+        },
     },
 
     /**
