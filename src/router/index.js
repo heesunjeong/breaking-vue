@@ -32,5 +32,8 @@ export default new Router(
       },
       {path: '*', component: NotFound}
     ],
+    scrollBehavior(to, from, savedPosition) {
+      return savedPosition || {x: 0, y: 0};
+    },
     /*mode: 'history'*/
   })

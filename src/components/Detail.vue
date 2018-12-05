@@ -5,16 +5,16 @@
         <div class="info_thumbnail"></div>
 
         <div class="place_detail">
-          <div class="tit">{{this.storeInfo.place_name}}</div>
+          <div class="tit">{{this.storeInfo.name}}</div>
           <div></div>
-          <div class="location_evaluation">{{this.storeInfo.category_name}}</div>
+          <div class="location_evaluation">{{this.storeInfo.category}}</div>
         </div>
       </div>
 
       <div class="basic_details">
         <h3 class="tit">상세정보</h3>
-        <div v-if="this.storeInfo.road_address_name">{{this.storeInfo.road_address_name}}</div>
-        <div v-if="this.storeInfo.address_name">{{this.storeInfo.address_name}}</div>
+        <div v-if="this.storeInfo.road_address_name">{{this.storeInfo.address}}</div>
+        <div v-if="this.storeInfo.address_name">{{this.storeInfo.address}}</div>
         <div v-if="this.storeInfo.phone">전화번호: {{this.storeInfo.phone}}</div>
       </div>
     </div>
@@ -73,7 +73,7 @@
 <script>
   import _ from 'lodash';
   import * as reviewActions from '../actions/reviewActions';
-  import * as mapActions from '../actions/mapActions';
+  import * as storeActions from '../actions/storeActions';
   import * as utils from '../utils/utils'
   import Paging from "./Paging";
 
@@ -86,7 +86,7 @@
         writingReview: '',
         roadReviewList: '',
         editingReview: '',
-        storeInfo: this.placeInfo ? this.placeInfo : '',
+        storeInfo: this.placeInfo || '',
         myId: utils.getUserId(),
         editing: false,
         totalCount: 0
@@ -94,8 +94,14 @@
     },
 
     mounted: function () {
+
+
+
       if (!this.storeInfo) {
         this.getStoreInfo();
+      } else {
+        this.parsingPlaceData(this.storeInfo);
+        this.saveStoreInfo(this.storeInfo)
       }
 
       this.getCountReview();
@@ -104,16 +110,16 @@
 
     methods: {
       getStoreInfo: function () {
-        const {id, store} = this.$route.query;
+        const {id} = this.$route.query;
 
-        mapActions.getStoreInfo(store)
-          .then(res => this.storeInfo = _.head(_.filter(res, {id: id})))
+        storeActions.getStoreInfo(id)
+          .then(res => this.storeInfo = res);
       },
 
       getReviewInfo: function (page) {
         const {id} = this.$route.query;
 
-        reviewActions.getReviewInfo(id, !page ? 0 : page-1)
+        reviewActions.getReviewInfo(id, !page ? 0 : page - 1)
           .then(res => this.roadReviewList = res);
       },
       getCountReview: function () {
@@ -122,21 +128,30 @@
         reviewActions.getCountReview(id)
           .then(res => this.totalCount = res);
       },
+
+      saveStoreInfo: function (store) {
+        storeActions.saveStore(store);
+      },
+
       saveReview: function () {
-        const {id} = this.storeInfo;
+        const {storeKey} = this.storeInfo;
 
         if (!this.writingReview.replace(/\s|　/gi, '')) {
-          alert("리뷰 내용을 입력해주세요.")
+          alert("리뷰 내용을 입력해주세요.");
           return;
         }
 
-        reviewActions.saveReview(id, this.writingReview)
-          .then(res => res ? this.onSuccessSave() : this.$router.push({name: 'login'}));
+        reviewActions.saveReview(storeKey, this.writingReview)
+          .then(res => res ? this.onSuccessSave() : console.log("리뷰 등록에 실패하였습니다.\n잠시 후 다시 시도해주세요."));
       },
 
       editReview: function (idx, originalReview) {
         originalReview.contents = this.editingReview;
         reviewActions.editReview(originalReview)
+          .then(res => {
+            let alertMsg = res ? '리뷰가 수정되었습니다.' : '리뷰 수정을 실패하였습니다.\n잠시 후에 다시 시도해주세요.';
+            alert(alertMsg)
+          });
 
         this.editing = false;
         this.editingReview = '';
@@ -144,7 +159,7 @@
 
       deleteReview: function (reviewId) {
         reviewActions.deleteReview(reviewId)
-          .then(res => res ? this.getReviewInfo(this.storeInfo.id) : this.$router.push({name: 'login'}));
+          .then(res => res ? this.onSuccessSave() : console.log('리뷰 삭제에 실패하였습니다.\n잠시 후 다시 시도해주세요.'));
       },
 
       cancelEditing: function () {
@@ -152,7 +167,8 @@
       },
 
       onSuccessSave: function () {
-        this.getReviewInfo(this.storeInfo.id);
+        this.getCountReview();
+        this.getReviewInfo();
         this.writingReview = '';
       },
 
@@ -167,9 +183,25 @@
           alert("리뷰는 200자까지 입력할 수 있어요.");
         }
       },
+
       changePages: function (page) {
         this.getReviewInfo(page);
+      },
+
+      parsingPlaceData: function (store) {
+        const {address_name, category_name, id, place_name, phone, x, y} = store;
+
+        this.storeInfo = {
+          address: address_name,
+          category: category_name,
+          name: place_name,
+          storeKey: id,
+          phone,
+          x,
+          y,
+        }
       }
+
     },
   }
 </script>

@@ -25,6 +25,7 @@
 
 <script>
   import * as actions from '../actions/mapActions'
+  import * as storeActions from '../actions/storeActions'
   import types from '../store/types'
   import Paging from "./Paging";
 
@@ -50,7 +51,7 @@
         this.$emit('mouseleave')
       },
       onClick: function (idx, selectedPlace) {
-        actions.saveStore(selectedPlace);
+        storeActions.saveStore(selectedPlace);
 
         this.$router.push({name: 'detail', query: {store: selectedPlace.place_name, id: selectedPlace.id}, params: {placeInfo: this.results[idx]}});
       },

@@ -11,8 +11,8 @@
     name: "Paging",
     props: [
       'totalData', // 데이터 총 갯수
-      'pageCount', //
-      'dataPerPage' //
+      'pageCount', // 페이지 그룹 페이지 갯수
+      'dataPerPage' // 한 페이지에 보여질 데이터 갯수
     ],
     data() {
       return {
@@ -24,6 +24,12 @@
     },
     mounted: function () {
       this.onPaging();
+    },
+    watch: {
+      totalData: function (props, oldProps) {
+        this.onPaging();
+        this.changePage(1);
+      }
     },
     methods: {
       onPaging: function () {

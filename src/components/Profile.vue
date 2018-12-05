@@ -28,24 +28,22 @@
     </div>
 
     <div class="review_list">
-      <div class="review_header">{{shortening(userInfo.name, 5)}} 님의 리뷰
-      </div>
+      <div class="review_header">{{shortening(userInfo.name, 5)}} 님의 리뷰</div>
 
       <div v-if="!!reviews" class="review_container">
-        <div v-for="(review, idx) in reviews" v-if="idx < 3" class="review_card">
+        <div v-for="(review, idx) in reviews" class="review_card" @click="onClickReview(review)">
           <div class="review_photo"></div>
           <div class="review_contents">"{{shortening(review.contents, 100)}}"</div>
           <div class="review_user">{{shortening(review.author.name, 5)}} / {{review.mod_at.split(" ")[0]}}</div>
-          <div class="review_store">{{review.storeId}}</div>
+          <div class="review_store">{{review.store ? review.store.name : review.storeKey}}</div>
         </div>
+        <div v-if="!isEndPage" @click="onMoreReview" class="review_more_btn">리뷰 더보기</div>
       </div>
 
-      <div v-else></div>
+      <div v-else>아직 리뷰가 없습니다.</div>
 
     </div>
-
   </div>
-
 </template>
 
 <script>
@@ -59,25 +57,32 @@
       return {
         amI: true,
         userInfo: '',
-        reviews: '',
+        reviews: [],
+        reviewPage: 0,
+        isEndPage: false
       }
     },
+
     mounted: function () {
       this.getProfileInfo();
     },
+
     beforeRouteUpdate: function (to, from, next) {
       if (to.query !== from.query) {
         next();
         this.getProfileInfo();
       }
     },
+
     methods: {
       onLogout: function () {
         userActions.logout(this.$router);
       },
+
       shortening: function (str, length) {
         return !str ? '' : `${str.substr(0, length)} ${str.length > length ? '...' : ''}`;
       },
+
       getProfileInfo: function () {
         const userParam = this.$route.query.u;
 
@@ -90,12 +95,26 @@
             this.userInfo = userData;
 
             if (userData) {
-              reviewActions.getReviewByAuthor(userData.id)
-                .then(reviewData => {
-                  this.reviews = reviewData;
-                })
+              this.getUserReview();
             }
           });
+      },
+
+      getUserReview: function () {
+        reviewActions.getReviewByAuthor(this.userInfo.id, this.reviewPage, 4)
+          .then(reviewData => {
+            this.reviews = this.reviews.concat(reviewData);
+            this.isEndPage = reviewData.length !== 4 ? true : false;
+          });
+      },
+
+      onMoreReview: function () {
+        this.reviewPage++;
+        this.getUserReview();
+      },
+
+      onClickReview: function (review) {
+        this.$router.push({name: "detail", query: {id: review.storeKey}});
       }
     }
   }
@@ -198,5 +217,11 @@
     cursor: pointer;
     height: 131px;
     width: 130px;
+  }
+  .review_more_btn {
+    background-color: #fff;
+    padding: 10px;
+    margin: 0 15% 0 15%;
+    font-weight: 300;
   }
 </style>

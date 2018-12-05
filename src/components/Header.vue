@@ -26,7 +26,6 @@
 
 <script>
   import Types from '../store/types'
-  import axios from 'axios'
   import * as Utils from '../utils/utils'
   import * as actions from '../actions/mapActions'
 
