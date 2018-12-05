@@ -53,6 +53,9 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
+    proxyTable: {
+      '/api' : { target: 'http://break.api.dev.9rum.cc', changeOrigin: true, pathRewrite: {'^/api': ''} }
+    },
 
     /**
      * Source Maps

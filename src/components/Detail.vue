@@ -94,9 +94,6 @@
     },
 
     mounted: function () {
-
-
-
       if (!this.storeInfo) {
         this.getStoreInfo();
       } else {
