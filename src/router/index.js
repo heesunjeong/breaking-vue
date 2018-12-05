@@ -9,8 +9,8 @@ import Login from '@/components/Login'
 import Profile from '@/components/Profile'
 import Detail from '@/components/Detail'
 import Settings from '@/components/Settings'
-import changePassword from '@/components/changePassword'
-import findPassword from '@/components/findPassword'
+import changePassword from '@/components/ChangePassword'
+import findPassword from '@/components/FindPassword'
 
 Vue.use(Router)
 
