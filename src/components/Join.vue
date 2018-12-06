@@ -6,8 +6,9 @@
       <div>
         <label for="inputEmail">이메일<span class="require">*</span></label>
         <div class="decor">
-          <input id="inputEmail" type="email" class="input_txt" v-model="email"/>
+          <input id="inputEmail" type="email" class="input_txt" v-model="email" @blur="validateEmail()"/>
         </div>
+        <div v-if="invalidId" class="check_validation_email">❌ 사용할 수 없는 이메일 주소입니다. :(</div>
       </div>
 
       <div>
@@ -44,22 +45,22 @@
         <label>생년월일</label>
         <div class="decor">
           <input type="hidden" id="birth" name="birth" v-model="birth"/>
-          <datepicker input-class="datepicker" v-model="birth" :language="ko" :format="formatDate" @selected="checkedDate" :required="true"></datepicker>
+          <datepicker input-class="datepicker" v-model="birth" :language="ko" :format="formatDate" @selected="checkedDate()" :required="true"></datepicker>
         </div>
       </div>
 
       <div class="profile">
         <label class="area_inline">프로필사진</label>
-        <input type="file" v-bind:class="{input_file:profileImg}" @change="selectProfileImg"/>
+        <input type="file" v-bind:class="{input_file:profileImg}" @change="selectProfileImg()"/>
 
         <div v-if="profileImg">
           <img :src="profileImg"/>
-          <p class="img_cancel" @click="deleteProgileImg">X</p>
+          <p class="img_cancel" @click="deleteProgileImg()">X</p>
         </div>
       </div>
 
       <div class="btn_join">
-        <button type="button" class="btn_basic" @click="joinUser">등록</button>
+        <button type="button" class="btn_basic" @click="joinUser()">등록</button>
       </div>
     </div>
   </div>
@@ -74,9 +75,10 @@
   import {ko} from 'vuejs-datepicker/dist/locale'
   import Noty from 'vuejs-noty'
   import 'vuejs-noty/dist/vuejs-noty.css'
+  import * as actions from '../actions/userActions'
 
   Vue.use(VueMomentJS, moment);
-  Vue.use(Noty, {theme: 'relax',timeout: 1000, progressBar: false, layout: 'topCenter'});
+  Vue.use(Noty, {theme: 'relax', timeout: 1000, progressBar: false, layout: 'topCenter'});
 
   export default {
     name: "Join",
@@ -90,7 +92,8 @@
         birth: '',
         ko: ko,
         interface_type: 'b',
-        profileImg: ''
+        profileImg: '',
+        invalidId: false
       }
     },
     components: {
@@ -98,44 +101,40 @@
     },
     methods: {
       joinUser: function () {
-        // validation check
-
         if (this.validationCheck()) {
-          if(confirm("회원가입 하시겠습니까 ?")){
-            axios.post('/api/user/register', {
+          if (confirm("회원가입 하시겠습니까 ?")) {
+            const userData = {
               email: this.email,
               password: this.password,
               name: this.name,
               gender: this.gender,
               birth: this.birth
-            }).then(res => {
-              if (res) {
-                if (!!res.data) {
-                  alert("우리 오늘 맛집 뿌셔?에 오신걸 환영합니다. :) ");
-                }
-              }
-            }).catch(error => {
-              console.log(error)
+            }
+
+            actions.join(userData, () => {
+              alert("우리 오늘 맛집 뿌셔?에 오신걸 환영합니다. :)");
+              this.$router.push({name: 'login'});
             })
           }
         } else {
           this.$noty.error("입력하신 정보를 다시 확인해주세요.");
         }
       },
+
       validationCheck: function () {
-        if(!this.email){
+        if (!this.email && this.validateEmail()) {
           this.$noty.error("이메일을 입력하세요.");
           email.focus();
           return false;
         }
 
-        if(!this.password){
+        if (!this.password) {
           this.$noty.error("비밀번호를 입력하세요.");
           password.focus();
           return false;
         }
 
-        if(!this.confirmPassword){
+        if (!this.confirmPassword) {
           this.$noty.error("비밀번호 확인을 해주세요.");
           confirmPassword.focus();
           return false;
@@ -147,7 +146,7 @@
           return false;
         }
 
-        if(!this.name){
+        if (!this.name) {
           this.$noty.error("이름을 입력하세요.");
           name.focus();
           return false;
@@ -155,10 +154,11 @@
 
         return true;
       },
-      selectProfileImg: function(e){
+
+      selectProfileImg: function (e) {
         var files = e.target.files || e.dataTransfer.files;
 
-        if (!files.length){
+        if (!files.length) {
           return;
         } else {
           var file = files[0];
@@ -166,14 +166,14 @@
           var reader = new FileReader();
           var vm = this;
 
-          if(file.type.indexOf("image") > -1){
+          if (file.type.indexOf("image") > -1) {
             reader.onload = (e) => {
               this.profileImg = e.target.result;
             };
             reader.readAsDataURL(file);
 
             this.imgName = file.name
-          }else{
+          } else {
             this.$noty.error('이미지 파일만 가능합니다.', {
               timeout: 1000,
               progressBar: true,
@@ -182,12 +182,15 @@
           }
         }
       },
-      deleteProgileImg: function(){
+
+      deleteProgileImg: function () {
         this.profileImg = ''
       },
+
       formatDate: function (date) {
         return moment(date).format('YYYY-MM-DD')
       },
+
       checkedDate: function (date) {
         let selectDate = moment(date).format('YYYYMMDD');
         let now = moment(new Date()).format('YYYYMMDD');
@@ -196,6 +199,17 @@
           console.log('noooooooooooo');
         }
       },
+
+      validateEmail: function () {
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!emailRegex.test(this.email)) {
+          this.invalidId = true;
+          return;
+        }
+
+        actions.validationUserId(this.email, (data) => this.invalidId = !data)
+      }
     }
   }
 </script>
@@ -231,25 +245,20 @@
     font-size: 15px;
     font-weight: bold;
   }
-
   .area_inline {
     float: left;
     margin-right: 10px;
   }
-
   #inputGender {
     text-align: center;
   }
-
   .profile .input_file {
     float: left;
     width: 185px;
   }
-
   .profile img {
     width: 130px;
   }
-
   .img_cancel {
     color: #ffffff;
     background-color: #ff0000;
@@ -260,11 +269,9 @@
     text-align: center;
     float: right;
   }
-
   .btn_join {
     margin: 50px 0 17px 150px;
   }
-
   .decor {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -318,5 +325,9 @@
     width: 150px;
     min-width: 100px;
     width: auto;
+  }
+  .check_validation_email {
+    font-size: 14px;
+    color: #ff0000;
   }
 </style>

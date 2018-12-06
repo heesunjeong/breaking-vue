@@ -98,7 +98,6 @@
         this.getStoreInfo();
       } else {
         this.parsingPlaceData(this.storeInfo);
-        this.saveStoreInfo(this.storeInfo)
       }
 
       this.getCountReview();
@@ -109,25 +108,22 @@
       getStoreInfo: function () {
         const {id} = this.$route.query;
 
-        storeActions.getStoreInfo(id)
-          .then(res => this.storeInfo = res);
+        storeActions.getStoreInfo(id, (data) => this.storeInfo = data);
       },
 
       getReviewInfo: function (page) {
-        const {id} = this.$route.query;
 
-        reviewActions.getReviewInfo(id, !page ? 0 : page - 1)
-          .then(res => this.roadReviewList = res);
+        //TODO Count가 0일때는 리뷰 리스트 부르지 않게
+
+        const {id} = this.$route.query;
+        reviewActions.getReviewInfo(id, !page ? 0 : page - 1, 5, (data) => this.roadReviewList = data);
+
       },
+
       getCountReview: function () {
         const {id} = this.$route.query;
 
-        reviewActions.getCountReview(id)
-          .then(res => this.totalCount = res);
-      },
-
-      saveStoreInfo: function (store) {
-        storeActions.saveStore(store);
+        reviewActions.getCountReview(id, (data) => this.totalCount = data);
       },
 
       saveReview: function () {
@@ -138,25 +134,19 @@
           return;
         }
 
-        reviewActions.saveReview(storeKey, this.writingReview)
-          .then(res => res ? this.onSuccessSave() : console.log("리뷰 등록에 실패하였습니다.\n잠시 후 다시 시도해주세요."));
+        reviewActions.saveReview(storeKey, this.writingReview, () => this.onSuccessSave());
       },
 
       editReview: function (idx, originalReview) {
         originalReview.contents = this.editingReview;
-        reviewActions.editReview(originalReview)
-          .then(res => {
-            let alertMsg = res ? '리뷰가 수정되었습니다.' : '리뷰 수정을 실패하였습니다.\n잠시 후에 다시 시도해주세요.';
-            alert(alertMsg)
-          });
+        reviewActions.editReview(originalReview);
 
         this.editing = false;
         this.editingReview = '';
       },
 
       deleteReview: function (reviewId) {
-        reviewActions.deleteReview(reviewId)
-          .then(res => res ? this.onSuccessSave() : console.log('리뷰 삭제에 실패하였습니다.\n잠시 후 다시 시도해주세요.'));
+        reviewActions.deleteReview(reviewId, (data) => data ? this.onSuccessSave() : alert('리뷰 삭제에 실패하였습니다.\n잠시 후 다시 시도해주세요.'));
       },
 
       cancelEditing: function () {
@@ -165,7 +155,7 @@
 
       onSuccessSave: function () {
         this.getCountReview();
-        this.getReviewInfo();
+        //this.getReviewInfo();
         this.writingReview = '';
       },
 

@@ -3,18 +3,15 @@ import {authToken, handleError} from './Auth';
 
 axios.defaults.headers.common['Authorization'] = authToken();
 
-export function getStoreInfo(storeKey) {
+export function getStoreInfo(storeKey, callback) {
   return axios.get('/api/store/info', {params: {storeKey}})
-    .then(res => {
-      if (res) {
-        return res.data;
-      }
-    }).catch(error => {
+    .then(res => callback(res.data))
+    .catch(error => {
       //handleError(error);
     })
 };
 
-export function saveStore(store) {
+export function saveStore(store, callback) {
   const {address_name, category_name, id, phone, place_name, road_address_name, x, y} = store;
 
   return axios.post('/api/store/save', {
@@ -26,9 +23,7 @@ export function saveStore(store) {
     x,
     y
   },)
-    .then(res => {
-      return res.data;
-    }).catch(error => {
-
+    .then(res => callback(res.data))
+    .catch(error => {
     });
 };

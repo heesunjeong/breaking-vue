@@ -90,33 +90,31 @@
       }
     },
     mounted: function () {
-      actions.getUserInfo()
-        .then(data => {
-          const {id, name, email, gender, birth, bio, profileImg} = data;
+      actions.getUserInfo(0, (data) => {
+        const {id, name, email, gender, birth, bio, profileImg} = data;
 
-          this.id = id;
-          this.name = name;
-          this.email = email;
-          this.gender = gender;
-          this.birth = birth;
-          this.bio = bio;
-          this.profileImg = profileImg;
-        });
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.gender = gender;
+        this.birth = birth;
+        this.bio = bio;
+        this.profileImg = profileImg;
+      });
     },
     methods: {
       updateUserInfo: function () {
         const {id, name, email, gender, birth, bio, profileImg} = this;
         const userData = {id, name, email, gender, birth, bio, profileImg};
 
-        actions.update(userData)
-          .then((res) => {
-            if (res) {
-              alert("수정이 성공하였습니다.");
-              this.$router.push({name: 'profile'});
-            } else {
-              alert("수정이 실패하였습니다.");
-            }
-          });
+        actions.update(userData, (data) => {
+          if (data) {
+            alert("수정이 성공하였습니다.");
+            this.$router.push({name: 'profile'});
+          } else {
+            alert("수정이 실패하였습니다.");
+          }
+        });
         //TODO 성공, 실패 여부에 따라 처리
       },
       cancel: function () {

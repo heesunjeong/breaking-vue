@@ -28,15 +28,10 @@
     methods: {
       onConfirm: function () {
         if (this.validate()) {
-          actions.findPassword(this.email)
-            .then(res => {
-              if (res) {
-                alert('이메일로 새로운 비밀번호를 보냈습니다. :)');
-                this.$router.push({name: 'login'});
-              } else {
-                alert('이메일 주소를 다시 확인해주세요.');
-              }
-            });
+          actions.findPassword(this.email, () => {
+            alert('이메일로 새로운 비밀번호를 보냈습니다. :)');
+            this.$router.push({name: 'login'});
+          })
         } else {
           alert('이메일 주소를 다시 확인해주세요.');
           this.email = '';

@@ -58,21 +58,15 @@
       changePages: function (selectedPage) {
         const {q, near} = this.$route.query;
 
-        actions.getPlace(q, near, selectedPage)
-          .then(res => {
-            if (res) {
-              const data = {q, near};
+        actions.getPlace(q, near, selectedPage, (data) => {
+          const query = {q, near};
 
-              this.$store.commit(types.SEARCH_TASTYLOAD, data);
-              this.$store.commit(types.SEARCH_RESULT, res);
-              this.$router.push({name: 'explore', query: data});
+          this.$store.commit(types.SEARCH_TASTYLOAD, query);
+          this.$store.commit(types.SEARCH_RESULT, data);
+          this.$router.push({name: 'explore', query: query});
 
-              window.scrollTo(0, 0);
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
+          window.scrollTo(0, 0);
+        })
       }
     }
   }

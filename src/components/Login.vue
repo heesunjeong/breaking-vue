@@ -53,10 +53,10 @@
     methods: {
       onLogin: function () {
         if (this.validate()) {
-          actions.login(this.email, this.password)
-            .then(data => {
-              !!data ? this.$router.push({name: 'home'}) : '';
-            });
+          actions.login(this.email, this.password, (data) => {
+            localStorage.setItem('user_token', JSON.stringify(data));
+            this.$router.push({name: 'home'});
+          })
         }
       },
       googleLogin: function () {

@@ -30,7 +30,7 @@
     <div class="review_list">
       <div class="review_header">{{shortening(userInfo.name, 5)}} 님의 리뷰</div>
 
-      <div v-if="!!reviews" class="review_container">
+      <div v-if="reviews.length" class="review_container">
         <div v-for="(review, idx) in reviews" class="review_card" @click="onClickReview(review)">
           <div class="review_photo"></div>
           <div class="review_contents">"{{shortening(review.contents, 100)}}"</div>
@@ -40,7 +40,7 @@
         <div v-if="!isEndPage" @click="onMoreReview" class="review_more_btn">리뷰 더보기</div>
       </div>
 
-      <div v-else>아직 리뷰가 없습니다.</div>
+      <div v-else>🏃 🏃 🏃{{shortening(userInfo.name, 5)}} 님은 아직 맛집 뿌시기 준비 중! 🏃 🏃 🏃‍️</div>
 
     </div>
   </div>
@@ -90,14 +90,10 @@
           this.amI = false;
         }
 
-        userActions.getUserInfo(this.amI ? 0 : this.$route.query.u)
-          .then(userData => {
-            this.userInfo = userData;
-
-            if (userData) {
-              this.getUserReview();
-            }
-          });
+        userActions.getUserInfo(this.amI ? 0 : this.$route.query.u, (data) => {
+          this.userInfo = data;
+          this.getUserReview();
+        })
       },
 
       getUserReview: function () {

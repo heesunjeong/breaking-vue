@@ -1,6 +1,6 @@
 <template>
   <div class="change_password">
-    <h2>비밀번호 수정</h2>
+    <h2>비밀번호 변경</h2>
     <div>
       <label for="input_password">현재 비밀번호</label>
       <div class="decor">
@@ -41,30 +41,40 @@
     },
     methods: {
       updatePassword: function () {
-        if (this.newPassword !== this.checkPassword) {
-          this.newPassword = '';
-          this.checkPassword = '';
+        if (this.checkValidate()) {
+          actions.updatePassword(password, (data) => {
+            if (data) {
+              alert("비밀번호가 변경되었습니다.");
+              this.$router.push({name: 'profile'});
+            } else {
+              this.invalidPassword("현재 비밀번호가 일치하지 않습니다.");
+            }
+          });
+        }
+      },
 
-          alert("비밀번호가 일치하지 않습니다.");
+      checkValidate: function () {
+        if (this.newPassword !== this.checkPassword) {
+          this.invalidPassword("새로운 비밀번호가 일치하지 않습니다.");
+          return false;
 
         } else if (this.oldPassword == '' || this.newPassword == '' || this.checkPassword == '') {
-          alert("비밀번호를 입력해주세요.")
+          alert("비밀번호를 입력해주세요.");
+          return false;
+
         } else {
-          const password = {
-            password: this.oldPassword,
-            newPassword: this.newPassword
-          }
-
-          actions.updatePassword(password)
-            .then(res => {
-              if(res) {
-                alert("비밀번호가 변경되었습니다.")
-                this.$router.push({name: 'settings'});
-              }
-            });
+          return true;
         }
+      },
 
-      }
+      invalidPassword: function (msg) {
+        this.oldPassword = '';
+        this.newPassword = '';
+        this.checkPassword = '';
+
+        alert(msg);
+      },
+
     }
   }
 </script>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {authToken, handleError} from "./Auth";
 
-export function getPlace(searchWord, location, page) {
+export function getPlace(searchWord, location, page, callback) {
   axios.defaults.headers.common['Authorization'] = authToken();
 
   return axios.get('/api/maps/place', {
@@ -10,9 +10,7 @@ export function getPlace(searchWord, location, page) {
       page: !page ? 1 : page
     }
   })
-    .then(res => {
-      return res.data;
-    })
+    .then(res => callback(res.data))
     .catch(error => {
       //handleError(error);
     })

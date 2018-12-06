@@ -48,20 +48,14 @@
       fetchData: function () {
         if (Utils.isNotNull(this.searchWord) || Utils.isNotNull(this.near)) {
 
-          actions.getPlace(this.searchWord, this.near)
-            .then(res => {
-              if (res) {
-                const data = {q: this.searchWord, near: this.near};
+          actions.getPlace(this.searchWord, this.near, 1, (data) => {
+            const query = {q: this.searchWord, near: this.near};
 
-                this.$store.commit(Types.SEARCH_TASTYLOAD, data);
-                this.$store.commit(Types.SEARCH_RESULT, res);
-                this.$router.push({name: 'explore', query: data});
-              }
-            })
-            .catch(error => {
-              console.log(error)
-            })
+            this.$store.commit(Types.SEARCH_TASTYLOAD, query);
+            this.$store.commit(Types.SEARCH_RESULT, data);
+            this.$router.push({name: 'explore', query: query});
 
+          });
         }
       }
     },
