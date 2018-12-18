@@ -181,6 +181,8 @@
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    background-image: url(https://ak5.picdn.net/shutterstock/videos/29648395/thumb/1.jpg);
+    opacity: 0.9;
   }
   .review_list .review_contents {
     padding: 20px;
@@ -210,7 +212,6 @@
   }
   .prof_image {
     -webkit-mask-size: 100%;
-    cursor: pointer;
     height: 131px;
     width: 130px;
   }
